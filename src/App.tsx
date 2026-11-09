@@ -9,7 +9,7 @@ import MyBookings from './pages/customer/MyBookings'
 import { Overview, AppointmentsPage, CalendarPage, ServicesPage, StaffPage, CustomersPage, AvailabilityPage, PaymentsPage, NotificationsPage, ReportsPage, SubscriptionPage, SettingsPage } from './pages/dashboard/DashboardPages'
 import { AdminOverview, AdminBusinesses, AdminUsers, AdminPlans, AdminPayments, AdminSupport, AdminSettings } from './pages/admin/AdminPages'
 const qc = new QueryClient()
-export default function App(){ return <QueryClientProvider client={qc}><LanguageProvider><BrowserRouter><Routes>
+export default function App(){ return <QueryClientProvider client={qc}><LanguageProvider><BrowserRouter basename={import.meta.env.BASE_URL}><Routes>
   <Route element={<PublicLayout/>}>
     <Route index element={<Home/>}/><Route path="features" element={<Features/>}/><Route path="industries" element={<Industries/>}/><Route path="pricing" element={<Pricing/>}/><Route path="about" element={<About/>}/><Route path="contact" element={<Contact/>}/>
     <Route path="login" element={<Login/>}/><Route path="register" element={<Register/>}/><Route path="forgot-password" element={<ForgotPassword/>}/>
