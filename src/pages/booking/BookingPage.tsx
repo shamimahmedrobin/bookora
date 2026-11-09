@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, useSearchParams, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -34,9 +34,13 @@ function parseTimeLabel(t: string) {
 
 export default function BookingPage() {
   const { slug } = useParams()
+  const [searchParams] = useSearchParams()
   const biz = businesses.find(b => b.slug === slug)
+  // Preselect a doctor when arriving from /doctors via /b/:slug?staff=<staffId> (must belong to this business).
+  const requestedStaff = searchParams.get('staff')
+  const preselectedStaffId = biz && requestedStaff && staffMembers.some(s => s.id === requestedStaff && s.businessId === biz.id) ? requestedStaff : 'auto'
   const [serviceId, setServiceId] = useState('')
-  const [staffId, setStaffId] = useState('auto')
+  const [staffId, setStaffId] = useState(preselectedStaffId)
   const [date, setDate] = useState(nextDays(14)[1])
   const [slot, setSlot] = useState('')
   const [couponCode, setCouponCode] = useState('')
@@ -137,7 +141,12 @@ export default function BookingPage() {
 
           <section className="bg-white border rounded-2xl p-4 sm:p-5 min-w-0">
             <h2 className="font-bold">2. Select staff</h2>
-            <select value={staffId} onChange={e => { setStaffId(e.target.value); setSlot('') }} className="mt-3 w-full min-w-0 border rounded-lg px-3 py-2 bg-white">
+            {staffId !== 'auto' && (() => { const sel = staffMembers.find(s => s.id === staffId); return sel ? (
+              <p className="mt-3 bg-indigo-50 text-indigo-900 text-sm rounded-lg px-3 py-2.5 break-words" role="status">
+                Selected doctor: <strong>{sel.name}</strong>{sel.specialty ? ` — ${sel.specialty}` : ` — ${sel.title}`} <span className="text-indigo-600">(change using the list below)</span>
+              </p>
+            ) : null })()}
+            <select value={staffId} onChange={e => { setStaffId(e.target.value); setSlot('') }} className="mt-3 w-full min-w-0 border rounded-lg px-3 py-2 bg-white" aria-label="Select staff">
               <option value="auto">Any available (auto-assign)</option>
               {staffMembers.filter(s => s.businessId === biz.id && (!service || s.serviceIds.includes(service.id))).map(s => <option key={s.id} value={s.id}>{s.name} — {s.title}</option>)}
             </select>

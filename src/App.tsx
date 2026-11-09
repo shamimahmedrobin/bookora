@@ -12,6 +12,7 @@ import { Login, Register, ForgotPassword } from './pages/public/AuthPages'
 // customer portal are code-split into separate chunks: public visitors never download
 // admin code, and each area can later move to its own subdomain (app./admin.) unchanged.
 const BookingPage = lazy(() => import('./pages/booking/BookingPage'))
+const DoctorsPage = lazy(() => import('./pages/public/DoctorsPage'))
 const MyBookings = lazy(() => import('./pages/customer/MyBookings'))
 const Overview = lazy(() => import('./pages/dashboard/DashboardPages').then(m => ({ default: m.Overview })))
 const AppointmentsPage = lazy(() => import('./pages/dashboard/DashboardPages').then(m => ({ default: m.AppointmentsPage })))
@@ -47,6 +48,7 @@ export default function App() {
                 <Route index element={<Home />} />
                 <Route path="features" element={<Features />} />
                 <Route path="industries" element={<Industries />} />
+                <Route path="doctors" element={<DoctorsPage />} />
                 <Route path="pricing" element={<Pricing />} />
                 <Route path="about" element={<About />} />
                 <Route path="contact" element={<Contact />} />

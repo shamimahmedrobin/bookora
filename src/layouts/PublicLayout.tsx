@@ -2,7 +2,7 @@ import { useState } from 'react'; import { Link, Outlet, NavLink } from 'react-r
 import { useLanguage, LanguageSwitcher } from '../i18n'; import { isDemoMode } from '../lib/supabase/client'
 export default function PublicLayout(){
   const [open,setOpen]=useState(false); const {t}=useLanguage()
-  const links=[{to:'/features',label:t('nav.features')},{to:'/industries',label:t('nav.industries')},{to:'/pricing',label:t('nav.pricing')},{to:'/about',label:t('nav.about')},{to:'/contact',label:t('nav.contact')}]
+  const links=[{to:'/features',label:t('nav.features')},{to:'/industries',label:t('nav.industries')},{to:'/doctors',label:t('nav.doctors')},{to:'/pricing',label:t('nav.pricing')},{to:'/about',label:t('nav.about')},{to:'/contact',label:t('nav.contact')}]
   return <div className="min-h-screen flex flex-col">
     {isDemoMode && <div className="bg-amber-50 text-amber-800 text-center text-xs py-1.5 px-3">Demo mode — Supabase env not configured. Data shown is realistic demo data; bookings use the real booking-engine logic locally.</div>}
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b">
