@@ -41,6 +41,9 @@ export default function BookingPage() {
   const preselectedStaffId = biz && requestedStaff && staffMembers.some(s => s.id === requestedStaff && s.businessId === biz.id) ? requestedStaff : 'auto'
   const [serviceId, setServiceId] = useState('')
   const [staffId, setStaffId] = useState(preselectedStaffId)
+  // When a doctor is preselected (from /doctors), the staff picker is hidden entirely;
+  // a small "Change doctor" link in the header reopens it on demand.
+  const [staffPickerOpen, setStaffPickerOpen] = useState(false)
   const [date, setDate] = useState(nextDays(14)[1])
   const [slot, setSlot] = useState('')
   const [couponCode, setCouponCode] = useState('')
@@ -104,6 +107,11 @@ export default function BookingPage() {
     </div>
   )
 
+  const doctorPreselected = preselectedStaffId !== 'auto'
+  const showStaffPicker = !doctorPreselected || staffPickerOpen
+  const stepDate = showStaffPicker ? 3 : 2
+  const stepDetails = showStaffPicker ? 4 : 3
+
   const subtotal = service?.priceMinor ?? 0
   const total = subtotal - discount
 
@@ -117,6 +125,7 @@ export default function BookingPage() {
               <h1 className="text-3xl sm:text-4xl font-bold break-words mt-1">{selectedStaff.name}</h1>
               <p className="text-slate-600 font-medium break-words mt-1">{selectedStaff.specialty ? `${selectedStaff.specialty} • ` : ''}{selectedStaff.title}{selectedStaff.experienceYears ? ` • ${selectedStaff.experienceYears} yrs experience` : ''}</p>
               <p className="text-sm text-slate-500 mt-2 max-w-xl break-words">at <span className="font-medium text-slate-600">{biz.name}</span> ({biz.nameBn}) • {biz.district}</p>
+              {!showStaffPicker && <button type="button" onClick={() => setStaffPickerOpen(true)} className="text-sm text-indigo-600 font-medium underline underline-offset-2 mt-1.5">Change doctor</button>}
             </div>
           ) : (
             <div className="min-w-0">
@@ -152,6 +161,7 @@ export default function BookingPage() {
             </div>
           </section>
 
+          {showStaffPicker && (
           <section className="bg-white border rounded-2xl p-4 sm:p-5 min-w-0">
             <h2 className="font-bold">2. Select staff</h2>
             {staffId !== 'auto' && (() => { const sel = staffMembers.find(s => s.id === staffId); return sel ? (
@@ -165,9 +175,10 @@ export default function BookingPage() {
             </select>
             {effectiveStaffId && <p className="text-xs text-slate-500 mt-2 break-words">Availability shown for: {staffMembers.find(s => s.id === effectiveStaffId)?.name}</p>}
           </section>
+          )}
 
           <section className="bg-white border rounded-2xl p-4 sm:p-5 min-w-0">
-            <h2 className="font-bold">3. Select date &amp; time</h2>
+            <h2 className="font-bold">{stepDate}. Select date &amp; time</h2>
             <div className="flex gap-2 overflow-x-auto max-w-full pb-2 pt-3 snap-x" role="listbox" aria-label="Choose a date">
               {nextDays(14).map(d => {
                 const dt = new Date(d + 'T12:00:00')
@@ -194,7 +205,7 @@ export default function BookingPage() {
           </section>
 
           <section className="bg-white border rounded-2xl p-4 sm:p-5 min-w-0">
-            <h2 className="font-bold">4. Your details (guest booking allowed)</h2>
+            <h2 className="font-bold">{stepDetails}. Your details (guest booking allowed)</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
               <div className="min-w-0"><label className="text-sm font-medium block">Full name *<input className="mt-1 w-full min-w-0 border rounded-lg px-3 py-2" {...register('name')} placeholder="Your name" /></label>{errors.name && <p className="text-red-600 text-xs mt-1">{errors.name.message}</p>}</div>
               <div className="min-w-0"><label className="text-sm font-medium block">Phone *<input className="mt-1 w-full min-w-0 border rounded-lg px-3 py-2" {...register('phone')} placeholder="+8801XXXXXXXXX" /></label>{errors.phone && <p className="text-red-600 text-xs mt-1">{errors.phone.message}</p>}</div>
