@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { MapPin, Navigation, Search, Star, X, Briefcase, Clock } from 'lucide-react'
 import { useLanguage } from '../../i18n'
-import { doctors, services, doctorFeeMinor, businessHoursForBooking, demoBreaks, demoHolidays, initialAppointments, type DoctorEntry } from '../../lib/demo/data'
+import { doctors, services, doctorFeeMinor, demoHolidays, initialAppointments, type DoctorEntry } from '../../lib/demo/data'
+import { getDoctorSettings, engineHoursFor, breaksForDate } from '../../lib/doctor-settings'
 import { generateAvailableSlots } from '../../lib/booking/availability'
 import { BD_DISTRICTS, districtByName, haversineKm, nearestDistrict } from '../../lib/location/districts'
 import { formatBDT } from '../../lib/utils'
@@ -42,6 +43,7 @@ const busyAppointments = initialAppointments.map(a => {
 function nextAvailableLabel(staff: DoctorEntry['staff']): string | null {
   const svc = services.filter(s => staff.serviceIds.includes(s.id)).sort((a, b) => a.priceMinor - b.priceMinor)[0]
   if (!svc) return null
+  const settings = getDoctorSettings(staff.id)
   const now = new Date()
   for (let i = 0; i < 7; i++) {
     const d = new Date(now); d.setDate(now.getDate() + i)
@@ -50,8 +52,8 @@ function nextAvailableLabel(staff: DoctorEntry['staff']): string | null {
       date: dateStr,
       service: { id: svc.id, durationMinutes: svc.durationMinutes, bufferMinutes: svc.bufferMinutes },
       staffId: staff.id,
-      businessHours: businessHoursForBooking,
-      breaks: demoBreaks,
+      businessHours: engineHoursFor(settings),
+      breaks: breaksForDate(settings, dateStr),
       holidays: demoHolidays,
       existingAppointments: busyAppointments,
       now, minAdvanceMinutes: 60, maxAdvanceDays: 30,

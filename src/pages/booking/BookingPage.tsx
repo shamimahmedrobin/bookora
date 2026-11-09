@@ -3,7 +3,8 @@ import { useParams, useSearchParams, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { businesses, services, staffMembers, businessHoursForBooking, demoBreaks, demoHolidays, initialAppointments } from '../../lib/demo/data'
+import { businesses, services, staffMembers, demoHolidays, initialAppointments } from '../../lib/demo/data'
+import { getDoctorSettings, engineHoursFor, breaksForDate, ticketLimitOn, sessionsOn, formatTime12 } from '../../lib/doctor-settings'
 import { generateAvailableSlots } from '../../lib/booking/availability'
 import { applyCoupon } from '../../lib/booking/coupons'
 import { genBookingRef, formatBDT } from '../../lib/utils'
@@ -18,9 +19,10 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 function nextDays(n: number) {
+  // Local (not UTC) date strings — toISOString shifts the day for UTC+ timezones like Asia/Dhaka.
   const out: string[] = []
   const d = new Date()
-  for (let i = 0; i < n; i++) { const x = new Date(d); x.setDate(d.getDate() + i); out.push(x.toISOString().slice(0, 10)) }
+  for (let i = 0; i < n; i++) { const x = new Date(d); x.setDate(d.getDate() + i); out.push(`${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`) }
   return out
 }
 function parseTimeLabel(t: string) {
@@ -62,23 +64,40 @@ export default function BookingPage() {
     [staffId, biz, service],
   )
   const effectiveStaffId = eligibleStaff[0]?.id ?? ''
-  const slots = useMemo(() => {
-    if (!service || !effectiveStaffId) return []
-    return generateAvailableSlots({
+  // The doctor's own chamber & schedule settings (dashboard → Chamber & Schedule) drive availability.
+  const staffSettings = useMemo(() => (effectiveStaffId ? getDoctorSettings(effectiveStaffId) : null), [effectiveStaffId])
+  const advanceDays = staffSettings?.advanceBookingDays ?? 30
+  const { slots, slotNote } = useMemo(() => {
+    if (!service || !effectiveStaffId || !staffSettings) return { slots: [] as ReturnType<typeof generateAvailableSlots>, slotNote: null as string | null }
+    const now = new Date()
+    const dow = new Date(date + 'T12:00:00').getDay()
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+    if (sessionsOn(staffSettings, dow).length > 0) {
+      const [rh, rm] = staffSettings.ticketResetTime.split(':').map(Number)
+      if (date === todayStr && now.getHours() * 60 + now.getMinutes() < rh * 60 + rm) {
+        return { slots: [], slotNote: `Tickets for today open at ${formatTime12(staffSettings.ticketResetTime)} — the doctor's daily ticket counter has not reset yet. Please pick another day or come back after the reset time.` }
+      }
+      const booked = initialAppointments.filter(a => a.staffId === effectiveStaffId && a.date === date && a.status !== 'cancelled' && a.status !== 'rejected').length
+      if (booked >= ticketLimitOn(staffSettings, dow)) {
+        return { slots: [], slotNote: `All tickets for this doctor are sold out for this date (daily ticket limit reached). Please pick another day.` }
+      }
+    }
+    const list = generateAvailableSlots({
       date,
       service: { id: service.id, durationMinutes: service.durationMinutes, bufferMinutes: service.bufferMinutes },
       staffId: effectiveStaffId,
-      businessHours: businessHoursForBooking,
-      breaks: demoBreaks,
+      businessHours: engineHoursFor(staffSettings),
+      breaks: breaksForDate(staffSettings, date),
       holidays: demoHolidays,
       existingAppointments: initialAppointments.filter(a => a.businessId === biz?.id).map(a => {
         const [h, m] = parseTimeLabel(a.time)
         const s = new Date(a.date + 'T00:00:00'); s.setHours(h, m)
         return { staffId: a.staffId, startAt: s, endAt: new Date(s.getTime() + 30 * 60000), status: a.status }
       }),
-      now: new Date(), minAdvanceMinutes: 60, maxAdvanceDays: 30,
+      now, minAdvanceMinutes: 60, maxAdvanceDays: staffSettings.advanceBookingDays,
     })
-  }, [service, effectiveStaffId, date, biz])
+    return { slots: list, slotNote: null as string | null }
+  }, [service, effectiveStaffId, date, biz, staffSettings])
 
   if (!biz) return (
     <div className="w-full max-w-2xl mx-auto px-4 py-12 sm:py-16 text-center">
@@ -180,7 +199,7 @@ export default function BookingPage() {
           <section className="bg-white border rounded-2xl p-4 sm:p-5 min-w-0">
             <h2 className="font-bold">{stepDate}. Select date &amp; time</h2>
             <div className="flex gap-2 overflow-x-auto max-w-full pb-2 pt-3 snap-x" role="listbox" aria-label="Choose a date">
-              {nextDays(14).map(d => {
+              {nextDays(Math.min(30, Math.max(1, advanceDays))).map(d => {
                 const dt = new Date(d + 'T12:00:00')
                 return (
                   <button type="button" key={d} onClick={() => { setDate(d); setSlot('') }} className={`shrink-0 snap-start border rounded-xl px-3 py-2 text-center text-sm ${date === d ? 'bg-indigo-600 text-white' : 'bg-white'}`} aria-pressed={date === d}>
@@ -192,7 +211,9 @@ export default function BookingPage() {
             </div>
             {!service
               ? <p className="text-sm text-amber-700 bg-amber-50 p-3 rounded-lg">Select a service first to see slots.</p>
-              : slots.length === 0
+              : slotNote
+                ? <p className="text-sm text-amber-700 bg-amber-50 p-3 rounded-lg">{slotNote}</p>
+                : slots.length === 0
                 ? <p className="text-sm text-slate-500 bg-slate-50 p-3 rounded-lg">No slots available on this date (closed, holiday, break or fully booked).</p>
                 : (
                   <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 mt-2">

@@ -20,7 +20,7 @@ const CalendarPage = lazy(() => import('./pages/dashboard/DashboardPages').then(
 const ServicesPage = lazy(() => import('./pages/dashboard/DashboardPages').then(m => ({ default: m.ServicesPage })))
 const StaffPage = lazy(() => import('./pages/dashboard/DashboardPages').then(m => ({ default: m.StaffPage })))
 const CustomersPage = lazy(() => import('./pages/dashboard/DashboardPages').then(m => ({ default: m.CustomersPage })))
-const AvailabilityPage = lazy(() => import('./pages/dashboard/DashboardPages').then(m => ({ default: m.AvailabilityPage })))
+const AvailabilityPage = lazy(() => import('./pages/dashboard/DoctorSchedulePage'))
 const PaymentsPage = lazy(() => import('./pages/dashboard/DashboardPages').then(m => ({ default: m.PaymentsPage })))
 const NotificationsPage = lazy(() => import('./pages/dashboard/DashboardPages').then(m => ({ default: m.NotificationsPage })))
 const ReportsPage = lazy(() => import('./pages/dashboard/DashboardPages').then(m => ({ default: m.ReportsPage })))
