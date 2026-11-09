@@ -1,0 +1,12 @@
+# Production Launch Checklist
+- [ ] Create Supabase project; apply migrations 0001–0008 in order; verify RLS with two test tenants (cross-tenant reads must return 0 rows)
+- [ ] Set VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY in hosting; set Edge Function secrets (service role, Resend, gateway secrets) — never in repo
+- [ ] Deploy Edge Functions: create-booking, payment-webhook, expire-holds (schedule every minute), send-notification
+- [ ] Obtain merchant approvals: bKash, Nagad, SSLCommerz; complete sandbox webhook tests; confirm no paid state without verified webhook
+- [ ] Configure Resend domain (SPF/DKIM) + SMS provider; test BN/EN templates
+- [ ] Custom domain DNS + TLS for platform domain; per-business domains verification flow
+- [ ] Enable backups / PITR on Supabase; test restore; set up error monitoring + uptime alerts
+- [ ] Rate limiting (Edge Function / CDN) on booking + auth endpoints; CAPTCHA on public booking if abused
+- [ ] Accessibility pass (keyboard, labels, contrast), Lighthouse perf ≥ 90 on booking page
+- [ ] Legal pages reviewed for BD + target markets; privacy/DPO contact live
+- [ ] Load test concurrent booking for same staff/slot (expect exactly 1 success)
