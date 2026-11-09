@@ -163,7 +163,7 @@ export default function BookingPage() {
 
           {showStaffPicker && (
           <section className="bg-white border rounded-2xl p-4 sm:p-5 min-w-0">
-            <h2 className="font-bold">2. Select staff</h2>
+            <h2 className="font-bold">2. Select doctor</h2>
             {staffId !== 'auto' && (() => { const sel = staffMembers.find(s => s.id === staffId); return sel ? (
               <p className="mt-3 bg-indigo-50 text-indigo-900 text-sm rounded-lg px-3 py-2.5 break-words" role="status">
                 Selected doctor: <strong>{sel.name}</strong>{sel.specialty ? ` — ${sel.specialty}` : ` — ${sel.title}`} <span className="text-indigo-600">(change using the list below)</span>

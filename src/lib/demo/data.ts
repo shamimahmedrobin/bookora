@@ -6,7 +6,6 @@ export interface Appointment { id:string; businessId:string; ref:string; custome
 
 export const businesses: Business[] = [
   { id:'biz-clinic', slug:'dhaka-care-clinic', name:'Dhaka Care Clinic', nameBn:'ঢাকা কেয়ার ক্লিনিক', industry:'Clinic', description:'Trusted family clinic in Dhanmondi with experienced doctors, same-day appointments and digital prescriptions.', city:'Dhaka', district:'Dhaka', address:'House 12, Road 5, Dhanmondi, Dhaka 1205', phone:'+8801711000001', timezone:'Asia/Dhaka', currency:'BDT', rating:4.8, reviews:324, color:'#4f46e5', planId:'professional' },
-  { id:'biz-salon', slug:'glow-studio-salon', name:'Glow Studio Salon', nameBn:'গ্লো স্টুডিও সেলুন', industry:'Salon & Beauty', description:'Premium salon & beauty parlour in Sylhet — hair, facial, bridal and spa by expert beauticians.', city:'Sylhet', district:'Sylhet', address:'Zindabazar, Sylhet 3100', phone:'+8801711000002', timezone:'Asia/Dhaka', currency:'BDT', rating:4.9, reviews:512, color:'#db2777', planId:'starter' },
   { id:'biz-dental', slug:'smile-dental-chattogram', name:'Smile Dental Care', nameBn:'স্মাইল ডেন্টাল কেয়ার', industry:'Dentist', description:'Modern dental care in Chattogram — cleaning, root canal, braces and implants with gentle care.', city:'Chattogram', district:'Chattogram', address:'GEC Circle, Chattogram 4000', phone:'+8801711000003', timezone:'Asia/Dhaka', currency:'BDT', rating:4.7, reviews:189, color:'#0891b2', planId:'professional' },
   { id:'biz-khulna', slug:'khulna-health-care', name:'Khulna Health Care', nameBn:'খুলনা হেলথ কেয়ার', industry:'Clinic', description:'Multi-specialty clinic in Khulna with experienced gynecology and medicine doctors.', city:'Khulna', district:'Khulna', address:'KDA Avenue, Khulna 9100', phone:'+8801711000004', timezone:'Asia/Dhaka', currency:'BDT', rating:4.7, reviews:208, color:'#059669', planId:'starter' },
   { id:'biz-rajshahi', slug:'rajshahi-medical-point', name:'Rajshahi Medical Point', nameBn:'রাজশাহী মেডিকেল পয়েন্ট', industry:'Clinic', description:'Specialist medical point in Rajshahi — cardiology consultation, ECG and heart checkups.', city:'Rajshahi', district:'Rajshahi', address:'Laxmipur, Rajshahi 6000', phone:'+8801711000005', timezone:'Asia/Dhaka', currency:'BDT', rating:4.6, reviews:156, color:'#7c3aed', planId:'professional' },
@@ -19,9 +18,6 @@ export const services: Service[] = [
   {id:'svc-1',businessId:'biz-clinic',category:'General',name:'General Consultation',nameBn:'সাধারণ পরামর্শ',durationMinutes:30,bufferMinutes:5,priceMinor:50000},
   {id:'svc-2',businessId:'biz-clinic',category:'General',name:'Follow-up Visit',nameBn:'ফলো-আপ ভিজিট',durationMinutes:20,bufferMinutes:5,priceMinor:30000},
   {id:'svc-3',businessId:'biz-clinic',category:'Pediatrics',name:'Child Consultation',nameBn:'শিশু পরামর্শ',durationMinutes:30,bufferMinutes:10,priceMinor:60000},
-  {id:'svc-4',businessId:'biz-salon',category:'Hair',name:'Hair Cut & Styling',nameBn:'হেয়ার কাট ও স্টাইলিং',durationMinutes:45,bufferMinutes:10,priceMinor:80000},
-  {id:'svc-5',businessId:'biz-salon',category:'Facial',name:'Signature Facial',nameBn:'সিগনেচার ফেসিয়াল',durationMinutes:60,bufferMinutes:10,priceMinor:150000},
-  {id:'svc-6',businessId:'biz-salon',category:'Bridal',name:'Bridal Makeup Trial',nameBn:'ব্রাইডাল মেকআপ ট্রায়াল',durationMinutes:90,bufferMinutes:15,priceMinor:300000},
   {id:'svc-7',businessId:'biz-dental',category:'Dental',name:'Dental Cleaning',nameBn:'ডেন্টাল ক্লিনিং',durationMinutes:45,bufferMinutes:10,priceMinor:120000},
   {id:'svc-8',businessId:'biz-dental',category:'Dental',name:'Root Canal Consultation',nameBn:'রুট ক্যানেল পরামর্শ',durationMinutes:30,bufferMinutes:5,priceMinor:80000},
   {id:'svc-9',businessId:'biz-khulna',category:'Gynecology',name:'Gynecology Consultation',nameBn:'গাইনী পরামর্শ',durationMinutes:30,bufferMinutes:10,priceMinor:80000},
@@ -40,8 +36,6 @@ export const services: Service[] = [
 export const staffMembers: Staff[] = [
   {id:'staff-1',businessId:'biz-clinic',name:'Dr. Farhana Rahman',title:'MBBS, Family Medicine',serviceIds:['svc-1','svc-2','svc-3'],specialty:'Family Medicine',specialtyBn:'পরিবার চিকিৎসা',experienceYears:10,rating:4.9,reviews:486},
   {id:'staff-2',businessId:'biz-clinic',name:'Dr. Tanvir Hasan',title:'MBBS, Pediatrics',serviceIds:['svc-1','svc-3'],specialty:'Pediatrics',specialtyBn:'শিশু',experienceYears:6,rating:4.7,reviews:203},
-  {id:'staff-3',businessId:'biz-salon',name:'Sharmin Akter',title:'Senior Hair Stylist',serviceIds:['svc-4','svc-6']},
-  {id:'staff-4',businessId:'biz-salon',name:'Nusrat Jahan',title:'Beauty Expert',serviceIds:['svc-5','svc-6']},
   {id:'staff-5',businessId:'biz-dental',name:'Dr. Arif Chowdhury',title:'BDS, Dental Surgeon',serviceIds:['svc-7','svc-8'],specialty:'Dentistry',specialtyBn:'দন্ত চিকিৎসা',experienceYears:9,rating:4.8,reviews:178},
   {id:'staff-6',businessId:'biz-khulna',name:'Dr. Sharmin Sultana',title:'MBBS, FCPS (Gynecology & Obstetrics)',serviceIds:['svc-9'],specialty:'Gynecology & Obstetrics',specialtyBn:'গাইনী ও প্রসূতি',experienceYears:12,rating:4.9,reviews:412},
   {id:'staff-7',businessId:'biz-khulna',name:'Dr. Mahmudul Karim',title:'MBBS, Medicine',serviceIds:['svc-10'],specialty:'Medicine',specialtyBn:'মেডিসিন',experienceYears:9,rating:4.7,reviews:268},
@@ -65,7 +59,7 @@ export const initialAppointments: Appointment[] = [
   {id:'a5',businessId:'biz-clinic',ref:'BKR-DEMO05',customerName:'Imran Hossain',customerPhone:'+8801712000005',serviceId:'svc-1',staffId:'staff-2',date:add(-1),time:'12:00 PM',status:'cancelled',priceMinor:50000,paymentStatus:'refunded',paymentMethod:'bkash'},
 ]
 export function businessById(id:string){ return businesses.find(b=>b.id===id) }
-/** A staff member counts as a doctor when their business is a clinic or a dentist. Salon/beauty staff are excluded. */
+/** A staff member counts as a doctor when their business is a clinic or a dentist. Only clinic and dentist staff are listed as doctors. */
 export function isDoctor(staff:Staff, business?:Business){ const biz = business ?? businessById(staff.businessId); return !!biz && (biz.industry==='Clinic' || biz.industry==='Dentist') }
 export interface DoctorEntry { staff:Staff; business:Business }
 /** All doctors on the platform, each paired with the clinic/dental practice they belong to. */
