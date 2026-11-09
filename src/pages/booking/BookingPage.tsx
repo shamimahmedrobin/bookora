@@ -86,11 +86,15 @@ export default function BookingPage() {
     </div>
   )
 
+  const selectedStaff = staffId !== 'auto' ? staffMembers.find(s => s.id === staffId && biz && s.businessId === biz.id) : undefined
+
   if (confirmed) return (
     <div className="w-full max-w-2xl mx-auto px-4 py-12 sm:py-16 text-center">
       <div className="text-5xl">✅</div>
       <h1 className="text-2xl sm:text-3xl font-bold mt-4">Booking confirmed!</h1>
-      <p className="mt-2 text-slate-600">Your booking reference is</p>
+      {selectedStaff && <p className="mt-2 text-lg text-slate-700">Your appointment is with <strong>{selectedStaff.name}</strong>{selectedStaff.specialty ? ` — ${selectedStaff.specialty}` : ''}</p>}
+      <p className="mt-1 text-sm text-slate-500">at {biz.name}, {biz.district}</p>
+      <p className="mt-3 text-slate-600">Your booking reference is</p>
       <div className="mt-3 inline-block max-w-full break-all bg-indigo-50 text-indigo-800 font-mono font-bold text-lg sm:text-xl px-4 sm:px-6 py-3 rounded-xl">{confirmed.ref}</div>
       <p className="text-sm text-slate-500 mt-4 max-w-md mx-auto">A confirmation would be sent by email/SMS in production (notification job queued). Payment status: <strong>{payment === 'manual' ? 'Pay at business (pending)' : 'Gateway demo — pending verification, NOT marked paid'}</strong>. Never trust a frontend callback alone.</p>
       <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
@@ -107,12 +111,21 @@ export default function BookingPage() {
     <div className="w-full max-w-5xl mx-auto px-3 sm:px-6 py-6 sm:py-8">
       <header className="border rounded-2xl p-4 sm:p-6 bg-white min-w-0" style={{ borderTop: `4px solid ${biz.color}` }}>
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-between sm:gap-3 min-w-0">
-          <div className="min-w-0">
-            <h1 className="text-2xl sm:text-3xl font-bold break-words">{biz.name}</h1>
-            <p className="text-slate-500 break-words">{biz.nameBn} • {biz.industry}</p>
-            <p className="text-sm text-slate-600 mt-2 max-w-xl break-words">{biz.description}</p>
-          </div>
-          <span className="flex items-center gap-1 font-semibold shrink-0"><Star className="text-amber-500 fill-amber-500 shrink-0" size={18} />{biz.rating} ({biz.reviews} reviews)</span>
+          {selectedStaff ? (
+            <div className="min-w-0">
+              <p className="text-xs font-bold uppercase tracking-wide text-indigo-600">Book appointment with</p>
+              <h1 className="text-3xl sm:text-4xl font-bold break-words mt-1">{selectedStaff.name}</h1>
+              <p className="text-slate-600 font-medium break-words mt-1">{selectedStaff.specialty ? `${selectedStaff.specialty} • ` : ''}{selectedStaff.title}{selectedStaff.experienceYears ? ` • ${selectedStaff.experienceYears} yrs experience` : ''}</p>
+              <p className="text-sm text-slate-500 mt-2 max-w-xl break-words">at <span className="font-medium text-slate-600">{biz.name}</span> ({biz.nameBn}) • {biz.district}</p>
+            </div>
+          ) : (
+            <div className="min-w-0">
+              <h1 className="text-2xl sm:text-3xl font-bold break-words">{biz.name}</h1>
+              <p className="text-slate-500 break-words">{biz.nameBn} • {biz.industry}</p>
+              <p className="text-sm text-slate-600 mt-2 max-w-xl break-words">{biz.description}</p>
+            </div>
+          )}
+          <span className="flex items-center gap-1 font-semibold shrink-0"><Star className="text-amber-500 fill-amber-500 shrink-0" size={18} />{selectedStaff?.rating ?? biz.rating} ({selectedStaff?.reviews ?? biz.reviews} reviews)</span>
         </div>
         <div className="flex flex-col gap-1.5 sm:flex-row sm:flex-wrap sm:gap-x-4 sm:gap-y-2 text-sm text-slate-500 mt-3 min-w-0">
           <span className="flex items-start gap-1.5 min-w-0"><MapPin size={16} className="shrink-0 mt-0.5" /><span className="break-words min-w-0">{biz.address}</span></span>
@@ -193,8 +206,15 @@ export default function BookingPage() {
 
         <aside className="bg-white border rounded-2xl p-4 sm:p-5 w-full min-w-0 lg:sticky lg:top-6">
           <h2 className="font-bold">Booking summary</h2>
+          {selectedStaff && (
+            <div className="mt-3 bg-indigo-50 border border-indigo-100 rounded-xl px-3 py-2.5">
+              <div className="text-[11px] font-bold uppercase tracking-wide text-indigo-500">Doctor</div>
+              <div className="font-bold text-base text-indigo-900 break-words">{selectedStaff.name}</div>
+              <div className="text-xs text-indigo-700 break-words">{selectedStaff.specialty ?? selectedStaff.title}</div>
+            </div>
+          )}
           <dl className="text-sm space-y-2 mt-3">
-            <div className="flex justify-between gap-3"><dt className="text-slate-500 shrink-0">Business</dt><dd className="font-medium text-right break-words min-w-0">{biz.name}</dd></div>
+            <div className="flex justify-between gap-3"><dt className="text-slate-500 shrink-0">{selectedStaff ? 'Clinic' : 'Business'}</dt><dd className="font-medium text-right break-words min-w-0">{biz.name}</dd></div>
             <div className="flex justify-between gap-3"><dt className="text-slate-500 shrink-0">Service</dt><dd className="font-medium text-right break-words min-w-0">{service?.name ?? '—'}</dd></div>
             <div className="flex justify-between gap-3"><dt className="text-slate-500 shrink-0">Date</dt><dd className="font-medium">{date}</dd></div>
             <div className="flex justify-between gap-3"><dt className="text-slate-500 shrink-0">Time</dt><dd className="font-medium">{slot || '—'}</dd></div>
