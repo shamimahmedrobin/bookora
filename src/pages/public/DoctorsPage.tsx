@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { MapPin, Navigation, Search, Star, X, Briefcase, Clock } from 'lucide-react'
 import { useLanguage } from '../../i18n'
 import { doctors, services, doctorFeeMinor, type DoctorEntry } from '../../lib/demo/data'
@@ -24,11 +24,16 @@ function distanceFrom(refName: string | null, entry: DoctorEntry): number | null
 
 export default function DoctorsPage() {
   const { t } = useLanguage()
-  const [district, setDistrict] = useState<string>(ALL)
-  const [status, setStatus] = useState('Showing doctors in all districts. Pick your district or use your location to see the nearest doctors first.')
+  const [searchParams] = useSearchParams()
+  const paramDistrict = searchParams.get('district')
+  const paramSpecialty = searchParams.get('specialty')
+  const initialDistrict = paramDistrict && districtByName(paramDistrict) ? paramDistrict : null
+  const initialSpecialty = paramSpecialty && doctors.some(d => d.staff.specialty === paramSpecialty) ? paramSpecialty : null
+  const [district, setDistrict] = useState<string>(initialDistrict ?? ALL)
+  const [status, setStatus] = useState(initialDistrict ? `Showing doctors in ${initialDistrict} first, then nearest districts.` : 'Showing doctors in all districts. Pick your district or use your location to see the nearest doctors first.')
   const [detecting, setDetecting] = useState(false)
-  const [query, setQuery] = useState('')
-  const [specialty, setSpecialty] = useState<string>('All')
+  const [query, setQuery] = useState(searchParams.get('q') ?? '')
+  const [specialty, setSpecialty] = useState<string>(initialSpecialty ?? 'All')
   const [selected, setSelected] = useState<DoctorEntry | null>(null)
 
   const specialties = useMemo(() => ['All', ...Array.from(new Set(doctors.map(d => d.staff.specialty).filter(Boolean) as string[])).sort()], [])

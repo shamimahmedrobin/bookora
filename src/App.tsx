@@ -5,7 +5,7 @@ import { LanguageProvider } from './i18n'
 import PublicLayout from './layouts/PublicLayout'
 import DashboardLayout from './layouts/DashboardLayout'
 import AdminLayout from './layouts/AdminLayout'
-import { Home, Features, Industries, Pricing, About, Contact, Legal } from './pages/public/PublicPages'
+import { Home, Features, Industries, Pricing, About, Contact, Legal, Clinics } from './pages/public/PublicPages'
 import { Login, Register, ForgotPassword } from './pages/public/AuthPages'
 
 // Public site ships in the main bundle. Business dashboard, super admin, booking and
@@ -49,6 +49,7 @@ export default function App() {
                 <Route path="features" element={<Features />} />
                 <Route path="industries" element={<Industries />} />
                 <Route path="doctors" element={<DoctorsPage />} />
+                <Route path="clinics" element={<Clinics />} />
                 <Route path="pricing" element={<Pricing />} />
                 <Route path="about" element={<About />} />
                 <Route path="contact" element={<Contact />} />
