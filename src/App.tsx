@@ -13,6 +13,7 @@ import { Login, Register, ForgotPassword } from './pages/public/AuthPages'
 // admin code, and each area can later move to its own subdomain (app./admin.) unchanged.
 const BookingPage = lazy(() => import('./pages/booking/BookingPage'))
 const DoctorsPage = lazy(() => import('./pages/public/DoctorsPage'))
+const DoctorProfilePage = lazy(() => import('./pages/public/DoctorProfilePage'))
 const MyBookings = lazy(() => import('./pages/customer/MyBookings'))
 const Overview = lazy(() => import('./pages/dashboard/DashboardPages').then(m => ({ default: m.Overview })))
 const AppointmentsPage = lazy(() => import('./pages/dashboard/DashboardPages').then(m => ({ default: m.AppointmentsPage })))
@@ -27,6 +28,7 @@ const ReportsPage = lazy(() => import('./pages/dashboard/DashboardPages').then(m
 const SubscriptionPage = lazy(() => import('./pages/dashboard/DashboardPages').then(m => ({ default: m.SubscriptionPage })))
 const SettingsPage = lazy(() => import('./pages/dashboard/DashboardPages').then(m => ({ default: m.SettingsPage })))
 const AdminOverview = lazy(() => import('./pages/admin/AdminPages').then(m => ({ default: m.AdminOverview })))
+const AdminDirectoryDoctors = lazy(() => import('./pages/admin/DirectoryDoctorsPage'))
 const AdminBusinesses = lazy(() => import('./pages/admin/AdminPages').then(m => ({ default: m.AdminBusinesses })))
 const AdminUsers = lazy(() => import('./pages/admin/AdminPages').then(m => ({ default: m.AdminUsers })))
 const AdminPlans = lazy(() => import('./pages/admin/AdminPages').then(m => ({ default: m.AdminPlans })))
@@ -49,6 +51,7 @@ export default function App() {
                 <Route path="features" element={<Features />} />
                 <Route path="industries" element={<Industries />} />
                 <Route path="doctors" element={<DoctorsPage />} />
+                <Route path="doctors/:slug" element={<DoctorProfilePage />} />
                 <Route path="clinics" element={<Clinics />} />
                 <Route path="pricing" element={<Pricing />} />
                 <Route path="about" element={<About />} />
@@ -79,6 +82,7 @@ export default function App() {
               <Route path="admin" element={<AdminLayout />}>
                 <Route index element={<AdminOverview />} />
                 <Route path="businesses" element={<AdminBusinesses />} />
+                <Route path="doctors" element={<AdminDirectoryDoctors />} />
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="plans" element={<AdminPlans />} />
                 <Route path="payments" element={<AdminPayments />} />
