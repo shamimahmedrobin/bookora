@@ -116,10 +116,21 @@ export default function DoctorProfilePage() {
         </section>
       </div>
 
-      {/* Sticky mobile call bar */}
-      <div className="fixed bottom-0 inset-x-0 z-40 bg-white border-t p-3 flex gap-2 sm:hidden">
-        <a href={tel} className="flex-1 text-center bg-emerald-600 text-white py-3 rounded-xl font-semibold inline-flex items-center justify-center gap-2"><Phone size={16} />Call {dir.phone}</a>
-        {staff && business && <Link to={`/b/${business.slug}?staff=${staff.id}`} className="flex-1 text-center bg-indigo-600 text-white py-3 rounded-xl font-semibold inline-flex items-center justify-center gap-2"><CalendarCheck size={16} />Book Online</Link>}
+      {/* Sticky mobile call bar — stacked label + number so long numbers never overflow */}
+      <div className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur border-t px-3 pt-2.5 flex gap-2 sm:hidden" style={{ paddingBottom: 'max(0.625rem, env(safe-area-inset-bottom))' }}>
+        <a href={tel} className="flex-1 min-w-0 bg-emerald-600 text-white rounded-xl px-2 py-2 flex items-center justify-center gap-2">
+          <Phone size={18} className="shrink-0" />
+          <span className="min-w-0 leading-tight text-left">
+            <span className="block text-[11px] font-medium text-emerald-100">Call for Appointment</span>
+            <span className="block font-bold text-sm truncate">{dir.phone}</span>
+          </span>
+        </a>
+        {staff && business && (
+          <Link to={`/b/${business.slug}?staff=${staff.id}`} className="flex-1 min-w-0 bg-indigo-600 text-white rounded-xl px-2 py-2 flex items-center justify-center gap-2">
+            <CalendarCheck size={18} className="shrink-0" />
+            <span className="font-bold text-sm whitespace-nowrap">Book Online</span>
+          </Link>
+        )}
       </div>
     </div>
   )

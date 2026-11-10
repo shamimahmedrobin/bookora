@@ -29,6 +29,7 @@ const SubscriptionPage = lazy(() => import('./pages/dashboard/DashboardPages').t
 const SettingsPage = lazy(() => import('./pages/dashboard/DashboardPages').then(m => ({ default: m.SettingsPage })))
 const AdminOverview = lazy(() => import('./pages/admin/AdminPages').then(m => ({ default: m.AdminOverview })))
 const AdminDirectoryDoctors = lazy(() => import('./pages/admin/DirectoryDoctorsPage'))
+const AdminClinics = lazy(() => import('./pages/admin/AdminClinicsPage'))
 const AdminBusinesses = lazy(() => import('./pages/admin/AdminPages').then(m => ({ default: m.AdminBusinesses })))
 const AdminUsers = lazy(() => import('./pages/admin/AdminPages').then(m => ({ default: m.AdminUsers })))
 const AdminPlans = lazy(() => import('./pages/admin/AdminPages').then(m => ({ default: m.AdminPlans })))
@@ -83,6 +84,7 @@ export default function App() {
                 <Route index element={<AdminOverview />} />
                 <Route path="businesses" element={<AdminBusinesses />} />
                 <Route path="doctors" element={<AdminDirectoryDoctors />} />
+                <Route path="clinics" element={<AdminClinics />} />
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="plans" element={<AdminPlans />} />
                 <Route path="payments" element={<AdminPayments />} />

@@ -1,7 +1,6 @@
-import { useMemo, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Phone, Plus, Pencil, Trash2, ExternalLink, X } from 'lucide-react'
-import { staffMembers } from '../../lib/demo/data'
 import { BD_DISTRICTS } from '../../lib/location/districts'
 import {
   listDirectoryDoctors, saveDirectoryDoctor, deleteDirectoryDoctor, slugify,
@@ -37,7 +36,7 @@ function emptyDraft(): DirectoryDoctor {
 }
 
 /** Downscale an uploaded photo to a 480×480 JPEG data URL so local storage stays small. */
-function fileToPhoto(file: File): Promise<string> {
+export function fileToPhoto(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file)
     const img = new Image()
@@ -68,8 +67,6 @@ export default function DirectoryDoctorsPage() {
   const [notice, setNotice] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
 
-  const staffOptions = useMemo(() => staffMembers, [])
-  const linkedStaffIds = useMemo(() => new Set(rows.map(r => r.staffId).filter(Boolean)), [rows])
 
   function refresh() { setRows(listDirectoryDoctors()) }
 
@@ -162,12 +159,11 @@ export default function DirectoryDoctorsPage() {
             <label className={labelCls}>New-patient fee (৳)<input type="number" min="0" value={draft.feeNewMinor !== null ? draft.feeNewMinor / 100 : ''} onChange={e => set('feeNewMinor', e.target.value === '' ? null : Math.round(Number(e.target.value) * 100))} placeholder="1000" className={`${inputCls} mt-1`} /></label>
             <label className={labelCls}>Follow-up fee (৳)<input type="number" min="0" value={draft.feeFollowupMinor !== null ? draft.feeFollowupMinor / 100 : ''} onChange={e => set('feeFollowupMinor', e.target.value === '' ? null : Math.round(Number(e.target.value) * 100))} placeholder="500" className={`${inputCls} mt-1`} /></label>
             <label className={labelCls}>Experience (years)<input type="number" min="0" max="60" value={draft.experienceYears ?? ''} onChange={e => set('experienceYears', e.target.value === '' ? undefined : Number(e.target.value))} className={`${inputCls} mt-1`} /></label>
-            <label className={labelCls}>Online booking
-              <select value={draft.staffId ?? ''} onChange={e => set('staffId', e.target.value || null)} className={`${inputCls} mt-1`}>
-                <option value="">Call only — no Bookora account (phone appointments)</option>
-                {staffOptions.map(s => <option key={s.id} value={s.id} disabled={linkedStaffIds.has(s.id) && draft.staffId !== s.id}>Link account: {s.name} (online booking enabled)</option>)}
-              </select>
-            </label>
+            <div className="sm:col-span-2 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-sm text-emerald-900">
+              {draft.staffId
+                ? <>This doctor has their own Bookora account, so <strong>online booking stays on</strong> alongside the call button (managed from their own dashboard, not here).</>
+                : <><strong>Call only:</strong> doctors added from Super Admin do not get online booking — their profile shows only the <strong>Call for Appointment</strong> button with the number above. সুপার অ্যাডমিন থেকে যোগ করা ডাক্তারের পেজে শুধু কল অপশনই দেখাবে।</>}
+            </div>
             <label className={labelCls}>Avatar colour
               <span className="flex gap-1.5 mt-2 flex-wrap">{COLORS.map(c => <button key={c} type="button" onClick={() => set('color', c)} aria-label={`Colour ${c}`} className={`w-7 h-7 rounded-full border-2 ${draft.color === c ? 'border-slate-900' : 'border-transparent'}`} style={{ background: c }} />)}</span>
             </label>
